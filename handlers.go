@@ -63,7 +63,7 @@ func handleTranscribe(c *gin.Context) {
 
 func handleList(c *gin.Context) {
 	var list []Transcription
-	db.Order("created_at desc").Find(&list).Select("id", "filename", "created_at")
+	db.Select("id", "filename", "created_at").Order("created_at desc").Find(&list)
 	c.JSON(http.StatusOK, list)
 }
 
@@ -76,31 +76,72 @@ func handleGet(c *gin.Context) {
 	c.JSON(http.StatusOK, tx)
 }
 
-// func handleSummarize(c *gin.Context) {
-// 	var tx Transcription
-// 	if err := db.First(&tx, "id = ?", c.Param("id")).Error; err != nil {
-// 		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
-// 		return
-// 	}
+func handleSummarize(c *gin.Context) {
+	var summary Summary
+	err := db.First(&summary, "transcription_id = ?", c.Param("id")).Error
+	if err == nil {
+		c.JSON(http.StatusOK, summary)
+		return
+	}
 
-// 	// 1) Ask OpenAI to summarize
-// 	chatReq := openai.ChatCompletionRequest{
-// 		Model: openai.GPT3Dot5Turbo,
-// 		Messages: []openai.ChatCompletionMessage{
-// 			{Role: "system", Content: "You are a helpful summarization assistant."},
-// 			{Role: "user", Content: "Summarize this transcript:\n\n" + tx.Text},
-// 		},
-// 	}
-// 	chatResp, err := openaiClient.CreateChatCompletion(c, chatReq)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
+	// no cached summary; proceed
+	var tx Transcription
+	if err := db.First(&tx, "id = ?", c.Param("id")).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+		return
+	}
 
-// 	summary := chatResp.Choices[0].Message.Content
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"id":        tx.ID,
-// 		"summary":   summary,
-// 		"generated": time.Now(),
-// 	})
-// }
+	params := openai.ChatCompletionNewParams{
+		Model: "o4-mini-2025-04-16",
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			{OfSystem: &openai.ChatCompletionSystemMessageParam{
+				Content: openai.ChatCompletionSystemMessageParamContentUnion{
+					OfString: openai.String("You summarize transcripts into professional meeting recaps."),
+				},
+			}},
+			{OfUser: &openai.ChatCompletionUserMessageParam{
+				Content: openai.ChatCompletionUserMessageParamContentUnion{
+					OfString: openai.String(
+						"Summarize the following transcript as a meeting recap. Focus on key points discussed, decisions made, and any action items.\n\n" +
+							"Format the output as Markdown with section headings (###) and bulleted lists compatible with Obsidian:\n\n" +
+							tx.Text,
+					),
+				},
+			}},
+		},
+	}
+	resp, err := client.Chat.Completions.New(c.Request.Context(), params)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	summaryText := resp.Choices[0].Message.Content
+	summary = Summary{
+		ID:              uuid.New().String(),
+		TranscriptionID: tx.ID,
+		Text:            summaryText,
+		CreatedAt:       time.Now(),
+	}
+	db.Create(&summary)
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":        tx.ID,
+		"summary":   summaryText,
+		"generated": time.Now(),
+	})
+}
+
+// admin routes
+
+func handleUsageSummary(c *gin.Context) {
+	end := time.Now()
+	start := end.AddDate(0, 0, -7)
+	costs, err := fetchCosts(c.Request.Context(), start, end)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, costs)
+}
