@@ -1,0 +1,31 @@
+type: http_request
+model: http_request
+id: rq_XMDDnMH8QY
+createdAt: 2025-06-27T21:04:48.685364
+updatedAt: 2025-06-27T23:30:23.578876
+workspaceId: wk_mCi63wDJuN
+folderId: fl_tstQ5T4GmL
+authentication: {}
+authenticationType: null
+body:
+  form:
+  - enabled: true
+    file: /Users/carter/Documents/Recording 20250627120110.m4a
+    id: Ran7c2xfY5
+    name: audio
+  - enabled: true
+    id: 7fGFsY7CkF
+    name: ''
+    value: ''
+bodyType: multipart/form-data
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: multipart/form-data
+  id: adtaSjr8Qw
+method: POST
+name: transcribe
+sortPriority: -0.0001
+url: ${[ BASE_URL ]}/transcribe
+urlParameters: []

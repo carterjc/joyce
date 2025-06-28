@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_3fziWTKYFH
+createdAt: 2025-06-27T21:04:15.628396
+updatedAt: 2025-06-27T23:30:32.105598
+workspaceId: wk_mCi63wDJuN
+folderId: fl_tstQ5T4GmL
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: transcriptions
+sortPriority: 0.0
+url: ${[ BASE_URL ]}/transcriptions
+urlParameters: []

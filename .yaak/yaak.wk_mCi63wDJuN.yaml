@@ -1,0 +1,14 @@
+type: workspace
+model: workspace
+id: wk_mCi63wDJuN
+createdAt: 2025-06-27T21:04:13.590281
+updatedAt: 2025-06-28T00:22:34.901960
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: joyce
+encryptionKeyChallenge: null
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0

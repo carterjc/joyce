@@ -1,0 +1,20 @@
+type: http_request
+model: http_request
+id: rq_7vruHpAVey
+createdAt: 2025-06-27T21:53:00.411725
+updatedAt: 2025-06-27T23:30:17.503335
+workspaceId: wk_mCi63wDJuN
+folderId: fl_kucdBVN8es
+authentication:
+  password: password
+  username: admin
+authenticationType: basic
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: usage
+sortPriority: -0.0001
+url: ${[ BASE_URL ]}/admin/usage/summary
+urlParameters: []

@@ -41,3 +41,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable joyce
 sudo systemctl start joyce
 ```
+
+## dev testing
+
+I'm trying out Yaak and saved the requests here (in `.yaak`). It's pretty good. Breath of fresh air from Postman.
