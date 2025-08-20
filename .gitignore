@@ -1,5 +1,7 @@
 .env
 .env.production
+.claude
 
 *.db
 uploads
+joyce

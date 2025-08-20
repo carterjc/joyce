@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgres://joyce:password@db:5432/joyce?sslmode=disable
+      - UPLOAD_DIR=/app/uploads
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ADMIN_PASS=${ADMIN_PASS:-admin}
+      - WHISPER_MODE=${WHISPER_MODE:-api}
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=joyce
+      - POSTGRES_USER=joyce
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
