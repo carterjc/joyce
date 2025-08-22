@@ -126,7 +126,7 @@ export function UploadForm({ onSuccess }: UploadFormProps) {
         {!file && !isUploading && (
           <div className="text-center">
             <p className="text-xs text-muted-foreground italic">
-              "The words we speak become the thoughts we preserve"
+              &quot;The words we speak become the thoughts we preserve&quot;
             </p>
           </div>
         )}

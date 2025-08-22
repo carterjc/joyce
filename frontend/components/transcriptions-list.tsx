@@ -96,7 +96,7 @@ export function TranscriptionsList() {
                   Your transcribed thoughts will appear here
                 </p>
                 <p className="text-xs text-muted-foreground italic">
-                  "Stream of consciousness flows into written word"
+                  &quot;Stream of consciousness flows into written word&quot;
                 </p>
               </div>
             </div>

@@ -3,12 +3,11 @@
 import { useState } from 'react'
 import { UploadForm } from '@/components/upload-form'
 import { TranscriptionsDataTable } from '@/components/transcriptions-data-table'
-import { type Transcription } from '@/lib/api'
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0)
 
-  const handleUploadSuccess = (_transcription: Transcription) => {
+  const handleUploadSuccess = () => {
     // Trigger a refresh of the transcriptions list
     setRefreshKey(prev => prev + 1)
   }
