@@ -10,6 +10,7 @@ services:
       - UPLOAD_DIR=/app/uploads
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ADMIN_PASS=${ADMIN_PASS:-admin}
+      - GIN_MODE=${GIN_MODE:-debug}
     volumes:
       - ./uploads:/app/uploads
     depends_on:
