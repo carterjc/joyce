@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
+  backend:
+    build: ./backend
     ports:
       - "8080:8080"
     environment:
@@ -12,10 +12,19 @@ services:
       - ADMIN_PASS=${ADMIN_PASS:-admin}
       - GIN_MODE=${GIN_MODE:-debug}
     volumes:
-      - ./uploads:/app/uploads
+      - ./backend/uploads:/app/uploads
     depends_on:
       db:
         condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+    depends_on:
+      - backend
 
   db:
     image: postgres:17

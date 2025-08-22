@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+:root {
+  /* Joyce-inspired color palette - warm, literary, thoughtful */
+  --background: #fdfcf9;
+  --foreground: #1a1815;
+  --muted: #f4f2ed;
+  --muted-foreground: #6b6755;
+  --popover: #ffffff;
+  --popover-foreground: #1a1815;
+  --card: #ffffff;
+  --card-foreground: #1a1815;
+  --border: #e6e3d9;
+  --input: #e6e3d9;
+  --primary: #8b4513;
+  --primary-foreground: #fdfcf9;
+  --secondary: #f4f2ed;
+  --secondary-foreground: #1a1815;
+  --accent: #ddd6c1;
+  --accent-foreground: #1a1815;
+  --destructive: #dc2626;
+  --destructive-foreground: #fdfcf9;
+  --ring: #8b4513;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode - deep, contemplative */
+    --background: #0d0c0a;
+    --foreground: #f0ede4;
+    --muted: #1a1815;
+    --muted-foreground: #8b8577;
+    --popover: #1a1815;
+    --popover-foreground: #f0ede4;
+    --card: #1a1815;
+    --card-foreground: #f0ede4;
+    --border: #2a2820;
+    --input: #2a2820;
+    --primary: #d2691e;
+    --primary-foreground: #0d0c0a;
+    --secondary: #1a1815;
+    --secondary-foreground: #f0ede4;
+    --accent: #2a2820;
+    --accent-foreground: #f0ede4;
+    --destructive: #ef4444;
+    --destructive-foreground: #f0ede4;
+    --ring: #d2691e;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Georgia, 'Times New Roman', serif;
+  line-height: 1.6;
+}
+
+/* Joyce-inspired typography */
+.prose {
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+}
+
+.monologue {
+  font-style: italic;
+  opacity: 0.8;
+  border-left: 3px solid var(--primary);
+  padding-left: 1rem;
+  margin: 1rem 0;
+}
+
+/* Stream of consciousness text effect */
+.stream-text {
+  background: linear-gradient(
+    45deg,
+    var(--foreground) 0%,
+    var(--muted-foreground) 50%,
+    var(--foreground) 100%
+  );
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: stream-flow 3s ease-in-out infinite;
+}
+
+@keyframes stream-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Improved contrast for accessibility */
+.high-contrast {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+.text-contrast {
+  color: var(--foreground);
+}
+
+.bg-contrast {
+  background-color: var(--background);
+}
+
+/* Literary quote styling */
+.epigraph {
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95em;
+  opacity: 0.9;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
