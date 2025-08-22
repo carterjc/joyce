@@ -7,16 +7,17 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+# build `joyce` binary
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o joyce ./cmd/server/main.go
 
 FROM alpine:latest
 
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
-COPY --from=builder /app/main .
+COPY --from=builder /app/joyce .
 
 RUN mkdir -p ./uploads
 
 EXPOSE 8080
-CMD ["./main"]
+CMD ["./joyce"]

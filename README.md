@@ -25,6 +25,7 @@ I built this with the intention of integrating with Obsidian audio recordings, s
 - `ADMIN_USER` - User for admin endpoints
 - `ADMIN_PASS` - Password for admin endpoints
 - `UPLOAD_DIR` - Directory for storing uploaded audio files (default: `./uploads`)
+- `NEXT_PUBLIC_API_URL` - The backend API URL
 
 ## Deployment
 
@@ -37,58 +38,6 @@ The NextJS frontend is exposed at: `joyce.costic.dev`
 The Golang API is exposed at `joyce-api.costic.dev`.
 
 I would've liked to use `api.joyce.costic.dev` but I don't want to deal with nested subdomains yet.
-
-## Obsidian Integration
-
-Joyce provides a dedicated API for Obsidian plugins to enable direct voice recording integration.
-
-### API Authentication
-
-All Obsidian API endpoints require authentication via API key:
-
-- Pass the API key in the `X-API-Key` header or `api_key` query parameter
-- Create API keys via the admin endpoint (see below)
-
-### Obsidian API Endpoints
-
-#### Transcribe Audio
-
-```
-POST /api/obsidian/transcribe
-```
-
-Parameters:
-
-- `audio` (file) - Audio file to transcribe
-- `language` (string) - Language code (default: "en")
-- `word_timestamps` (boolean) - Include word-level timestamps (default: true)
-- `initial_prompt` (string) - Optional context prompt
-- `format` (string) - Output format: "default", "meeting", "timestamp", "speaker"
-
-Response includes formatted text ready for Obsidian notes.
-
-#### Check Status
-
-```
-GET /api/obsidian/status/:id
-```
-
-#### Get Formatted Output
-
-```
-GET /api/obsidian/format/:id?format=meeting
-```
-
-### Managing API Keys
-
-Create an API key (admin only):
-
-```bash
-curl -X POST http://localhost:8080/api/obsidian/keys \
-  -H "X-Admin-Password: $ADMIN_PASS" \
-  -H "Content-Type: application/json" \
-  -d '{"name": "My Obsidian Vault", "description": "Personal vault"}'
-```
 
 ## dev testing
 
