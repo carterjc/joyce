@@ -69,11 +69,10 @@ func main() {
 		AllowCredentials: true,
 	}
 
-	// Configure CORS origins based on environment
 	if os.Getenv("GIN_MODE") == "release" {
-		corsConfig.AllowOrigins = []string{"http://localhost:3000"}
+		corsConfig.AllowOrigins = []string{"https://joyce.costic.dev", "http://10.0.0.59:8080"}
 	} else {
-		// Development: allow all origins for easier testing
+		// allow all origins for testing purposes
 		corsConfig.AllowAllOrigins = true
 	}
 
