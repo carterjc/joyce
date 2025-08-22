@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Joyce - Audio Transcription",
-  description: "Transform your audio into text with AI-powered transcription",
+  title: "Joyce",
+  description: "To reveal the inner workings of the mind",
 };
 
 export default function RootLayout({
@@ -24,11 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
     </html>
   );
 }
