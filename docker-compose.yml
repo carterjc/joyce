@@ -10,7 +10,6 @@ services:
       - UPLOAD_DIR=/app/uploads
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ADMIN_PASS=${ADMIN_PASS:-admin}
-      - WHISPER_MODE=${WHISPER_MODE:-api}
     volumes:
       - ./uploads:/app/uploads
     depends_on:

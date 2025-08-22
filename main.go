@@ -48,7 +48,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&Transcription{}, &Summary{}, &ApiKeys{})
+	db.AutoMigrate(&Transcription{}, &Summary{}, &ApiKeys{}, &ObsidianWebhook{})
 
 	client = openai.NewClient(option.WithAPIKey(apiKey))
 	os.MkdirAll(uploadDir, 0755)
@@ -69,6 +69,9 @@ func main() {
 	}
 	admin := r.Group("/admin", gin.BasicAuth(adminUsers))
 	admin.GET("/usage/summary", handleUsageSummary)
+
+	// Setup Obsidian API routes
+	setupObsidianRoutes(r)
 
 	r.Run(":8080")
 }
