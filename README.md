@@ -17,6 +17,14 @@ to reveal the rich interior of the mind..
 
 I'm currently deploying this stack on my own hardware using [Komodo](https://komo.do). It's pretty great. The only consideration is that--because my infra repo is disaggregated from the app services--I have to handle routing through a side channel. So, after configuring the Komodo stack (or syncing via a resource group), remember to add a manual rule through Dockflare.
 
+### Access
+
+The NextJS frontend is exposed at: `joyce.costic.dev`
+
+The Golang API is exposed at `joyce-api.costic.dev`.
+
+I would've liked to use `api.joyce.costic.dev` but I don't want to deal with nested subdomains yet.
+
 ## Obsidian Integration
 
 Joyce provides a dedicated API for Obsidian plugins to enable direct voice recording integration.
