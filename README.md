@@ -2,6 +2,19 @@
 
 to reveal the rich interior of the mind..
 
+## Roadmap
+
+A lot of this scaffold is AI generated and bad, so if I want to spend more time on this, I'll be gradually cleaning up that tech debt. I also used the backend as an opportunity to try `gorm` (recently have been working with `sqlc` and `go-jet` too). I unfortunately don't love it, but hopefully the scope here stays small and it's okay.
+
+I built this with the intention of integrating with Obsidian audio recordings, so that's the immediate prio (the frontend was a detour, but also a convenient way to develop). Over the horizon lies
+
+- [Building the Obsidian plugin](https://docs.obsidian.md/Plugins/Getting+started/Build+a+plugin) and polishing the API
+- Adding different modes of summarization
+- Adding speaker diarization/audio segmentation
+- Adding generic webhooks (kinda supposes that transcription becomes async, which I may or may not do)
+- Stylizing the frontend more to lean into the "Joycean" theme
+- (Maybe) making it multi-tenant in case other people want to use
+
 ## Configuration
 
 ### Environment Variables
@@ -76,26 +89,6 @@ curl -X POST http://localhost:8080/api/obsidian/keys \
   -H "Content-Type: application/json" \
   -d '{"name": "My Obsidian Vault", "description": "Personal vault"}'
 ```
-
-### Webhooks
-
-Register a webhook to receive transcription events:
-
-```bash
-curl -X POST http://localhost:8080/api/obsidian/webhooks \
-  -H "X-API-Key: your-api-key" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://your-server.com/webhook", "events": "transcription.completed"}'
-```
-
-### Output Formats
-
-- **default**: Plain transcription text
-- **meeting**: Structured meeting notes with sections for summary, transcript, and action items
-- **timestamp**: Includes word-level timestamps (when available)
-- **speaker**: Prepared for speaker diarization (future feature)
-
-Each format includes Obsidian-compatible YAML frontmatter with metadata.
 
 ## dev testing
 

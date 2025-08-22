@@ -1,54 +1,31 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { AppLayout } from '@/components/app-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { apiClient, type Transcription, type Summary } from '@/lib/api'
+import { apiClient } from '@/lib/api'
+import { useParams, useRouter } from 'next/navigation'
+import useSWR from 'swr'
 
 export default function TranscriptionPage() {
   const params = useParams()
   const router = useRouter()
-  const [transcription, setTranscription] = useState<Transcription | null>(null)
-  const [summary, setSummary] = useState<Summary | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSummarizing, setIsSummarizing] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
   const transcriptionId = params.id as string
 
-  useEffect(() => {
-    if (transcriptionId) {
-      loadTranscription()
-    }
-  }, [transcriptionId]) // eslint-disable-line react-hooks/exhaustive-deps
+  const { data: transcription, isLoading, error, mutate: retryLoadTranscription } = useSWR(
+    transcriptionId ? `transcription-${transcriptionId}` : null,
+    () => apiClient.getTranscription(transcriptionId),
+    { revalidateOnFocus: false }
+  )
 
-  const loadTranscription = async () => {
-    try {
-      setIsLoading(true)
-      setError(null)
-      const data = await apiClient.getTranscription(transcriptionId)
-      setTranscription(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load transcription')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const { data: summary, mutate: generateSummary, isValidating: isSummarizing } = useSWR(
+    transcription?.has_summary ? `summary-${transcriptionId}` : null, // auto-fetch summary if has_summary is True (cached)
+    () => apiClient.summarizeTranscription(transcriptionId),
+    { revalidateOnFocus: false }
+  )
 
-  const handleSummarize = async () => {
-    if (!transcription) return
-
-    try {
-      setIsSummarizing(true)
-      const summaryData = await apiClient.summarizeTranscription(transcription.id)
-      setSummary(summaryData)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate summary')
-    } finally {
-      setIsSummarizing(false)
-    }
+  const handleSummarize = () => {
+    if (transcription) generateSummary()
   }
 
   const handleCopyText = () => {
@@ -90,7 +67,7 @@ export default function TranscriptionPage() {
                 Back to Home
               </Button>
               {error && (
-                <Button onClick={loadTranscription} variant="outline">
+                <Button onClick={() => retryLoadTranscription()} variant="outline">
                   Retry
                 </Button>
               )}
@@ -101,19 +78,9 @@ export default function TranscriptionPage() {
     )
   }
 
+  console.log(transcription.has_summary)
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto p-6 max-w-4xl">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-              ← Return to the Stream
-            </Button>
-          </Link>
-        </div>
-      </div>
-
+    <AppLayout>
       <div className="container mx-auto p-6 max-w-4xl">
         <div className="space-y-8">
           {/* Header */}
@@ -135,7 +102,7 @@ export default function TranscriptionPage() {
               </Button>
               <Button 
                 onClick={handleSummarize} 
-                disabled={isSummarizing}
+                disabled={isSummarizing || transcription.has_summary}
                 variant="secondary"
               >
                 {isSummarizing ? (
@@ -207,6 +174,6 @@ export default function TranscriptionPage() {
           </div>
         </div>
       </div>
-    </div>
+    </AppLayout>
   )
 }

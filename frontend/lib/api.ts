@@ -5,6 +5,7 @@ export interface Transcription {
   filename: string;
   text: string;
   created_at: string;
+  has_summary: boolean;
 }
 
 export interface Summary {
@@ -23,8 +24,8 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+    options: RequestInit = {},
+  ): Promise<T> {  
     const url = `${this.baseUrl}${endpoint}`;
     
     const response = await fetch(url, {
@@ -39,7 +40,10 @@ class ApiClient {
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
 
-    return response.json();
+    const data = await response.json();
+
+
+    return data;
   }
 
   // Transcription endpoints
@@ -56,22 +60,74 @@ class ApiClient {
       throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
     }
 
-    return response.json();
+    const transcription = await response.json();
+    return transcription;
   }
 
   async getTranscriptions(): Promise<Transcription[]> {
-    return this.request<Transcription[]>('/transcriptions');
+    return this.request<Transcription[]>('/transcriptions', {});
   }
 
   async getTranscription(id: string): Promise<Transcription> {
-    return this.request<Transcription>(`/transcriptions/${id}`);
+    return this.request<Transcription>(`/transcriptions/${id}`, {});
   }
 
   async summarizeTranscription(id: string): Promise<Summary> {
+    // Cache summaries for longer since they're expensive to generate (15 minutes)
     return this.request<Summary>(`/summarize/${id}`, {
       method: 'GET',
     });
   }
+
+  // Utility method to force refresh data
+  async refreshTranscriptions(): Promise<Transcription[]> {
+    return this.getTranscriptions();
+  }
+
+  async refreshTranscription(id: string): Promise<Transcription> {
+    return this.getTranscription(id);
+  }
+
+  async downloadAudio(id: string): Promise<{ filename: string; success: boolean }> {
+    try {
+      const response = await fetch(`${this.baseUrl}/transcriptions/${id}/download`);
+      
+      if (!response.ok) {
+        throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+      }
+
+      // Extract filename from Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'audio_file';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      // Create blob and trigger download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
+      // Create temporary link and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      return { filename, success: true };
+    } catch (error) {
+      console.error('Audio download failed:', error);
+      throw error;
+    }
+  }
 }
+
 
 export const apiClient = new ApiClient();

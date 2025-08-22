@@ -1,4 +1,4 @@
-module joyce
+module github.com/carterjc/joyce
 
 go 1.24.4
 

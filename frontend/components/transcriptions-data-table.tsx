@@ -1,23 +1,24 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import Link from 'next/link'
 import {
-  useReactTable,
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getSortedRowModel,
   getPaginationRowModel,
-  ColumnDef,
-  flexRender,
+  getSortedRowModel,
   SortingState,
-  ColumnFiltersState,
+  useReactTable,
 } from '@tanstack/react-table'
-import { ChevronUp, ChevronDown, Search, ExternalLink, Copy, Calendar, FileText } from 'lucide-react'
+import { Calendar, ChevronDown, ChevronUp, Copy, ExternalLink, FileText, Search } from 'lucide-react'
+import Link from 'next/link'
+import { useMemo, useState } from 'react'
+import useSWR from 'swr'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -29,29 +30,19 @@ import {
 import { apiClient, type Transcription } from '@/lib/api'
 
 export function TranscriptionsDataTable() {
-  const [transcriptions, setTranscriptions] = useState<Transcription[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  // Use SWR for data fetching
+  const { data: transcriptions = [], isLoading, error, mutate } = useSWR(
+    'transcriptions',
+    () => apiClient.getTranscriptions(),
+    { 
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
+    }
+  )
+  
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
-
-  useEffect(() => {
-    loadTranscriptions()
-  }, [])
-
-  const loadTranscriptions = async () => {
-    try {
-      setIsLoading(true)
-      setError(null)
-      const data = await apiClient.getTranscriptions()
-      setTranscriptions(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load transcriptions')
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -161,7 +152,7 @@ export function TranscriptionsDataTable() {
                 onClick={() => handleCopyText(transcription.text)}
               >
                 <Copy className="mr-1 h-3 w-3" />
-                Preserve
+                Copy
               </Button>
             </div>
           )
@@ -229,7 +220,7 @@ export function TranscriptionsDataTable() {
           <div className="text-destructive bg-destructive/10 p-3 rounded-md">
             {error}
           </div>
-          <Button onClick={loadTranscriptions} className="mt-4">
+          <Button onClick={() => mutate()} className="mt-4">
             Retry
           </Button>
         </CardContent>
@@ -240,19 +231,21 @@ export function TranscriptionsDataTable() {
   return (
     <Card className="shadow-lg border-border bg-card">
       <CardHeader className="space-y-4">
-        <div>
-          <CardTitle className="text-2xl font-bold text-card-foreground">
-            Interior Monologues
-          </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            {transcriptions.length === 0 
-              ? 'No captured thoughts yet. Begin with your first recording to populate this consciousness.'
-              : `${transcriptions.length} recorded thought${transcriptions.length === 1 ? '' : 's'} preserved`
-            }
-          </CardDescription>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-2xl font-bold text-card-foreground">
+              Interior Monologues
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              {transcriptions.length === 0 
+                ? 'No captured thoughts yet. Begin with your first recording to populate this consciousness.'
+                : `${transcriptions.length} recorded thought${transcriptions.length === 1 ? '' : 's'} preserved`
+              }
+            </CardDescription>
+          </div>
         </div>
         
-        {transcriptions.length > 0 && (
+        {transcriptions.length > 0 ? (
           <div className="flex items-center space-x-2">
             <Search className="h-4 w-4 text-muted-foreground" />
             <Input
@@ -262,7 +255,7 @@ export function TranscriptionsDataTable() {
               className="max-w-sm"
             />
           </div>
-        )}
+        ) : null}
       </CardHeader>
       
       <CardContent>
