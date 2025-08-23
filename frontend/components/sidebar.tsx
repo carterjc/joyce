@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Blocks,
   BookOpen,
   ChevronDown,
   ChevronRight,
@@ -87,8 +88,14 @@ const SidebarComponent = function Sidebar({ className }: SidebarProps) {
     },
     {
       href: "/integrations",
-      icon: Settings,
+      icon: Blocks,
       label: "Integrations",
+      exact: false,
+    },
+    {
+      href: "/settings",
+      icon: Settings,
+      label: "Settings",
       exact: false,
     },
   ] as const;

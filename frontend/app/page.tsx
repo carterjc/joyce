@@ -16,7 +16,6 @@ export default function Home() {
 
   return (
     <AppLayout>
-      {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-background via-muted/20 to-accent/20 border-b border-border">
         <div className="relative container mx-auto px-6 pt-6">
           <div className="max-w-4xl mx-auto text-center">
@@ -24,14 +23,11 @@ export default function Home() {
             <Quote slug="portia-desc" size="large" />
           </div>
         </div>
-        {/* Statistics Section */}
         <div className="container mx-auto px-6 pb-4">
           <DashboardStats />
         </div>
-
-        {/* Analytics Section */}
         <div className="container mx-auto px-6 pb-8">
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2 items-start">
             <CalendarHeatmap transcriptions={transcriptions} />
             <RecordingTimeline transcriptions={transcriptions} />
           </div>

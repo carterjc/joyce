@@ -45,13 +45,14 @@ func init() {
 		AddSource: true,           // include file:line
 	})
 	logger = slog.New(h)
+	slog.SetDefault(logger)
 
 	var err error
 	gdb, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
-	err = gdb.AutoMigrate(&db.Transcription{}, &db.Summary{}, &db.ApiKeys{})
+	err = gdb.AutoMigrate(&db.Transcription{}, &db.TranscriptionSegment{}, &db.Summary{}, &db.ApiKeys{}, &db.Settings{})
 	if err != nil {
 		panic(err)
 	}
@@ -63,7 +64,7 @@ func init() {
 }
 
 func main() {
-	router.SetGlobals(gdb, client, uploadDir, logger)
+	router.SetGlobals(gdb, client, uploadDir)
 	r := router.SetupRouter()
 
 	r.Run(":8080")

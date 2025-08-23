@@ -10,44 +10,37 @@ export default function UploadPage() {
 
   const handleUploadSuccess = (transcription: Transcription) => {
     setLastUpload(transcription);
-    // Optionally redirect to the new transcription
-    // router.push(`/transcription/${transcription.id}`)
   };
 
   return (
     <AppLayout>
-      <div className="container mx-auto p-6 max-w-4xl">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="epigraph text-muted-foreground max-w-2xl mx-auto">
-            &ldquo;Speech is civilization itself. The word, even the most contradictory word, preserves contact—it is
-            silence which isolates.&rdquo;
-            <div className="text-sm mt-2 opacity-75">— Thomas Mann</div>
+      <div className="container mx-auto p-6 max-w-2xl">
+        <div className="space-y-6">
+          {/* Header */}
+          <div>
+            <h1 className="text-2xl font-semibold text-foreground">Upload Recording</h1>
+            <p className="text-sm text-muted-foreground mt-1">Upload an audio file to generate a transcription</p>
           </div>
-        </div>
 
-        {/* Upload Form */}
-        <div className="max-w-2xl mx-auto">
+          {/* Upload Form */}
           <UploadForm onSuccess={handleUploadSuccess} />
-        </div>
 
-        {/* Last Upload Success */}
-        {lastUpload && (
-          <div className="mt-8 max-w-2xl mx-auto">
-            <div className="p-4 bg-accent/20 border border-accent rounded-lg">
-              <h3 className="font-semibold text-accent-foreground mb-2">Transcription Complete</h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                Your voice has been captured and transformed into written consciousness.
+          {/* Success Message */}
+          {lastUpload && (
+            <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+              <h3 className="font-medium text-green-800 dark:text-green-200 mb-1">Upload Successful</h3>
+              <p className="text-sm text-green-700 dark:text-green-300 mb-3">
+                Your file has been transcribed successfully.
               </p>
-              <div className="flex items-center space-x-3">
-                <span className="text-sm font-medium">{lastUpload.filename}</span>
-                <a href={`/transcription/${lastUpload.id}`} className="text-sm text-primary hover:underline">
-                  Explore the interior voice →
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-green-700 dark:text-green-300">{lastUpload.filename}</span>
+                <a href={`/transcription/${lastUpload.id}`} className="text-sm text-green-800 dark:text-green-200 hover:underline font-medium">
+                  View transcription →
                 </a>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </AppLayout>
   );
